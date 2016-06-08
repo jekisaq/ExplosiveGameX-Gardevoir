@@ -4,7 +4,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import ru.explosivegamex.gardevoir.listeners.PlayerEventsListener;
+import ru.explosivegamex.gardevoir.listeners.AuthorizedTitleListener;
 
 public class GardevoirMain extends JavaPlugin
 {
@@ -29,14 +29,15 @@ public class GardevoirMain extends JavaPlugin
     }
 
     private void registerEventListeners() {
-        getServer().getPluginManager().registerEvents(new PlayerEventsListener(
+        getServer().getPluginManager().registerEvents(new AuthorizedTitleListener(
                 config.getString("messages.title"),
                 config.getString("messages.subtitle")), this);
 
-        Bukkit.getLogger().info("[Gardevoir] All event listeners has been loaded.");
+        Bukkit.getLogger().info("[Gardevoir] All event listeners have been loaded.");
     }
 
     public static String convertToChat(String source) {
-        return source.replaceAll("&", String.valueOf(ChatColor.COLOR_CHAR));
+        return ChatColor.translateAlternateColorCodes('&', source);
     }
+
 }

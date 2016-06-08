@@ -2,3 +2,4 @@ name: Gardevoir
 version: 0.1.1-SNAPSHOT
 author: 'ExplosiveGameX Team'
 main: ru.explosivegamex.gardevoir.GardevoirMain
+softdepend: [TitleAPI]
