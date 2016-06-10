@@ -8,18 +8,20 @@ import ru.explosivegamex.gardevoir.commands.PvPCommand;
 public class GardevoirMain extends JavaPlugin
 {
     private FileConfiguration config = getConfig();
+    private PvPCommand PvPCommand;
 
     @Override
     public void onEnable() {
         getLogger().info("Gardevoir has been enabled.");
 
         setUpConfig();
+        PvPCommand = new PvPCommand(getLogger(), this, config.getString("PvPLobbyRegion.name"), getLobbyLocation());
         registerEventListeners();
         registerCommandExecutors();
     }
 
     private void registerCommandExecutors() {
-        getCommand("pvp").setExecutor(new PvPCommand(getLogger(), config.getString("PvPLobbyRegion.name"), getLobbyLocation()));
+        getCommand("pvp").setExecutor(PvPCommand);
     }
 
     private void setUpConfig() {
@@ -30,6 +32,8 @@ public class GardevoirMain extends JavaPlugin
         config.addDefault("PvPLobbyRegion.y", spawnLocation.getBlockY());
         config.addDefault("PvPLobbyRegion.z", spawnLocation.getBlockZ());
         config.addDefault("PvPLobbyRegion.name", "pvp-lobby");
+
+        config.addDefault("leave.delay", 5);
 
         config.options().copyDefaults(true);
 
@@ -46,6 +50,8 @@ public class GardevoirMain extends JavaPlugin
     }
 
     private void registerEventListeners() {
+        getServer().getPluginManager().registerEvents(PvPCommand, this);
+
         getLogger().info("All event listeners have been loaded.");
     }
 

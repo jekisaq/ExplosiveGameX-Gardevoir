@@ -9,18 +9,27 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
-public class PvPCommand implements CommandExecutor {
+public class PvPCommand implements CommandExecutor, Listener {
 
     private Logger logger;
+    private JavaPlugin plugin;
     private String pvpArenaName;
     private Location lobby;
 
-    public PvPCommand(Logger logger, String regionName, Location lobby) {
+    private Set<Player> unmovedPlayers = new HashSet<>();
+
+    public PvPCommand(Logger logger, JavaPlugin plugin, String regionName, Location lobby) {
         this.logger = logger;
+        this.plugin = plugin;
         this.pvpArenaName = regionName;
         this.lobby = lobby;
     }
@@ -56,11 +65,26 @@ public class PvPCommand implements CommandExecutor {
         RegionManager manager = WGBukkit.getRegionManager(player.getWorld());
         Set<ProtectedRegion> regionSet = manager.getApplicableRegions(player.getLocation()).getRegions();
         if (regionSet.stream().anyMatch(protectedRegion -> protectedRegion.getId().equals(pvpArenaName))) {
-            if (player.teleport(lobby)) {
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9&l[&6&lInfo&9&l] &2&lВы покинули &c&lpvp&r-&6&lарену"));
-            }
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9&l[&6&lInfo&9&l] &7Вы покинете &c&lpvp&r-&6&lарену &7через &6&l5 &7секунд. Не двигайтесь!"));
+            unmovedPlayers.add(player);
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                if (unmovedPlayers.contains(player)) {
+                    if (player.teleport(lobby)) {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9&l[&6&lInfo&9&l] &2&lВы покинули &c&lpvp&r-&6&lарену"));
+                    }
+
+                    unmovedPlayers.remove(player);
+                } else {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9&l[&6&lInfo&9&l] &c&lЗапрос на телепортацию был отменен!"));
+                }
+            }, 5 * 20);
         } else {
             logger.info("Player " + player.getDisplayName() + " attempted to leave the pvp-arena from its outside!");
         }
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent event) {
+        unmovedPlayers.removeIf(p -> p.equals(event.getPlayer()));
     }
 }
