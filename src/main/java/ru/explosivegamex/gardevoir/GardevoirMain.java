@@ -1,10 +1,9 @@
 package ru.explosivegamex.gardevoir;
 
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import ru.explosivegamex.gardevoir.listeners.AuthorizedTitleListener;
+import ru.explosivegamex.gardevoir.commands.PvPCommand;
 
 public class GardevoirMain extends JavaPlugin
 {
@@ -12,32 +11,42 @@ public class GardevoirMain extends JavaPlugin
 
     @Override
     public void onEnable() {
-        Bukkit.getLogger().info("[Gardevoir] Gardevoir has been enabled.");
+        getLogger().info("Gardevoir has been enabled.");
 
         setUpConfig();
         registerEventListeners();
+        registerCommandExecutors();
+    }
+
+    private void registerCommandExecutors() {
+        getCommand("pvp").setExecutor(new PvPCommand(getLogger(), config.getString("PvPLobbyRegion.name"), getLobbyLocation()));
     }
 
     private void setUpConfig() {
         config.options().header("The ExplosiveGameX main plugin named Gardevoir. All rights reserved.");
-        config.addDefault("messages.title", "&7&lДобро пожаловать");
-        config.addDefault("messages.subtitle", "&7&lна сервер ExplosiveGame&8&lX");
+
+        Location spawnLocation = getServer().getWorld("world").getSpawnLocation();
+        config.addDefault("PvPLobbyRegion.x", spawnLocation.getBlockX());
+        config.addDefault("PvPLobbyRegion.y", spawnLocation.getBlockY());
+        config.addDefault("PvPLobbyRegion.z", spawnLocation.getBlockZ());
+        config.addDefault("PvPLobbyRegion.name", "pvp-lobby");
 
         config.options().copyDefaults(true);
 
         saveConfig();
     }
 
-    private void registerEventListeners() {
-        getServer().getPluginManager().registerEvents(new AuthorizedTitleListener(
-                config.getString("messages.title"),
-                config.getString("messages.subtitle")), this);
-
-        Bukkit.getLogger().info("[Gardevoir] All event listeners have been loaded.");
+    private Location getLobbyLocation() {
+        return new Location(
+                getServer().getWorld("world"),
+                config.getDouble("PvPLobbyRegion.x"),
+                config.getDouble("PvPLobbyRegion.y"),
+                config.getDouble("PvPLobbyRegion.z")
+        );
     }
 
-    public static String convertToChat(String source) {
-        return ChatColor.translateAlternateColorCodes('&', source);
+    private void registerEventListeners() {
+        getLogger().info("All event listeners have been loaded.");
     }
 
 }

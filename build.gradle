@@ -1,9 +1,9 @@
 group 'ru.explosivegamex'
-version '0.1.1-SNAPSHOT'
+version '0.1.2-SNAPSHOT'
 
 apply plugin: 'java'
 
-sourceCompatibility = 1.8
+compileJava.options.encoding = 'UTF-8'
 
 repositories {
     mavenCentral()
@@ -16,14 +16,11 @@ repositories {
         name 'BungeeCord'
         url "https://oss.sonatype.org/content/repositories/snapshots"
     }
-//    maven {
-//        name 'inventive-repo'
-//        url "https://repo.inventivetalent.org/content/repositories/public/"
-//    }
+    maven { url "http://maven.sk89q.com/repo/" }
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile 'org.spigotmc:spigot-api:1.9.4-R0.1-SNAPSHOT'
-    compile files('libs/titleapi-2.1.2.jar')
+    compile 'com.sk89q:worldguard:6.1.1-SNAPSHOT'
 }
