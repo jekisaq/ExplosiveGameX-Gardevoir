@@ -1,5 +1,5 @@
 name: Gardevoir
-version: 0.1.3-SNAPSHOT
+version: 0.1.4
 author: 'ExplosiveGameX Team'
 main: ru.explosivegamex.gardevoir.GardevoirMain
 depend: [WorldGuard]

@@ -2,26 +2,37 @@ package ru.explosivegamex.gardevoir;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.explosivegamex.gardevoir.commands.PvPCommand;
+import ru.explosivegamex.gardevoir.listeners.PlayerUnmovedListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class GardevoirMain extends JavaPlugin
 {
     private FileConfiguration config = getConfig();
-    private PvPCommand PvPCommand;
+    private Map<String, Listener> listenerMap;
 
     @Override
     public void onEnable() {
-        getLogger().info("Gardevoir has been enabled.");
+        listenerMap = new HashMap<>();
 
         setUpConfig();
-        PvPCommand = new PvPCommand(getLogger(), this, config.getString("PvPLobbyRegion.name"), getLobbyLocation());
         registerEventListeners();
         registerCommandExecutors();
+
+        getLogger().info("Gardevoir has been enabled.");
     }
 
     private void registerCommandExecutors() {
-        getCommand("pvp").setExecutor(PvPCommand);
+        Listener playerUnmovedListener = listenerMap.get("playerUnmovedListener");
+        if (playerUnmovedListener instanceof PlayerUnmovedListener) {
+            getCommand("pvp").setExecutor(new PvPCommand(this, (PlayerUnmovedListener) listenerMap.get("playerUnmovedListener"), config.getString("PvPLobbyRegion.name")));
+        } else {
+            getLogger().severe("Command pvp aren't loaded, because PlayerUnmovedListener not detected.");
+        }
     }
 
     private void setUpConfig() {
@@ -40,17 +51,10 @@ public class GardevoirMain extends JavaPlugin
         saveConfig();
     }
 
-    private Location getLobbyLocation() {
-        return new Location(
-                getServer().getWorld("world"),
-                config.getDouble("PvPLobbyRegion.x"),
-                config.getDouble("PvPLobbyRegion.y"),
-                config.getDouble("PvPLobbyRegion.z")
-        );
-    }
-
     private void registerEventListeners() {
-        getServer().getPluginManager().registerEvents(PvPCommand, this);
+        listenerMap.put("playerUnmovedListener", new PlayerUnmovedListener());
+
+        listenerMap.forEach((key, listener) -> getServer().getPluginManager().registerEvents(listener, this));
 
         getLogger().info("All event listeners have been loaded.");
     }
