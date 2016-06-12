@@ -6,7 +6,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.explosivegamex.gardevoir.commands.PlayerSubCommand;
 import ru.explosivegamex.gardevoir.listeners.PlayerUnmovedListener;
-import ru.explosivegamex.gardevoir.util.Informer;
+import ru.explosivegamex.gardevoir.util.GardevoirPlayer;
+import ru.explosivegamex.gardevoir.util.Inform;
 import ru.explosivegamex.gardevoir.util.MessageType;
 
 public class LeaveSubCommand extends PlayerSubCommand {
@@ -25,10 +26,8 @@ public class LeaveSubCommand extends PlayerSubCommand {
     }
 
     public void run() {
-        if (isPlayerInsideRegion(pvpRegionName)) {
-            Informer.to(player, "Вы покинете &c&lpvp&r-&6&lарену &7через &6&l5 &7секунд. Не двигайтесь!");
-            playerUnmovedListener.addListening(player);
-
+        if (GardevoirPlayer.of(player).isInsideRegion(pvpRegionName)) {
+            Inform.to(player, "Вы покинете &c&lpvp&r-&6&lарену &7через &6&l5 &7секунд. Не двигайтесь!");
             performDelayedTeleport();
         } else {
             plugin.getLogger().info("Player " + player.getDisplayName() + " attempted to leave the pvp-arena from its outside!");
@@ -36,17 +35,19 @@ public class LeaveSubCommand extends PlayerSubCommand {
     }
 
     private void performDelayedTeleport() {
+        playerUnmovedListener.addListening(player);
+
         plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             if (playerUnmovedListener.hasPlayerMoved(player)) {
                 if (player.teleport(getLobbyLocation())) {
-                    Informer.to(player, "Вы покинули &c&lpvp&r-&6&lарену", MessageType.SUCCESS);
+                    Inform.to(player, "Вы покинули &c&lpvp&r-&6&lарену", MessageType.SUCCESS);
                 }
 
                 playerUnmovedListener.removeListeningPlayer(player);
             } else {
-                Informer.to(player, "Запрос на телепортацию был отменен!", MessageType.ERROR);
+                Inform.to(player, "Запрос на телепортацию был отменен!", MessageType.ERROR);
             }
-        }, 5 * 20);
+        }, plugin.getConfig().getLong("leave.delay") * 20);
     }
 
     private Location getLobbyLocation() {

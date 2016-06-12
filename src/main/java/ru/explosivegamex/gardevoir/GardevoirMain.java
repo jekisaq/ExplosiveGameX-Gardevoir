@@ -5,7 +5,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.explosivegamex.gardevoir.commands.PvPCommand;
+import ru.explosivegamex.gardevoir.listeners.PlayerQuitListener;
 import ru.explosivegamex.gardevoir.listeners.PlayerUnmovedListener;
+import ru.explosivegamex.gardevoir.listeners.PvPArenaEnterListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,9 +29,9 @@ public class GardevoirMain extends JavaPlugin
     }
 
     private void registerCommandExecutors() {
-        Listener playerUnmovedListener = listenerMap.get("playerUnmovedListener");
+        Listener playerUnmovedListener = listenerMap.get("playerUnmoved");
         if (playerUnmovedListener instanceof PlayerUnmovedListener) {
-            getCommand("pvp").setExecutor(new PvPCommand(this, (PlayerUnmovedListener) listenerMap.get("playerUnmovedListener"), config.getString("PvPLobbyRegion.name")));
+            getCommand("pvp").setExecutor(new PvPCommand(this, (PlayerUnmovedListener) listenerMap.get("playerUnmoved"), config.getString("PvPLobbyRegion.name")));
         } else {
             getLogger().severe("Command pvp aren't loaded, because PlayerUnmovedListener not detected.");
         }
@@ -44,7 +46,7 @@ public class GardevoirMain extends JavaPlugin
         config.addDefault("PvPLobbyRegion.z", spawnLocation.getBlockZ());
         config.addDefault("PvPLobbyRegion.name", "pvp-lobby");
 
-        config.addDefault("leave.delay", 5);
+        config.addDefault("leave.delay", 5L);
 
         config.options().copyDefaults(true);
 
@@ -52,7 +54,9 @@ public class GardevoirMain extends JavaPlugin
     }
 
     private void registerEventListeners() {
-        listenerMap.put("playerUnmovedListener", new PlayerUnmovedListener());
+        listenerMap.put("playerUnmoved", new PlayerUnmovedListener());
+        listenerMap.put("playerQuit", new PlayerQuitListener(config.getString("PvPLobbyRegion.name")));
+        listenerMap.put("pvpArenaEnter", new PvPArenaEnterListener(config.getString("PvPLobbyRegion.name")));
 
         listenerMap.forEach((key, listener) -> getServer().getPluginManager().registerEvents(listener, this));
 

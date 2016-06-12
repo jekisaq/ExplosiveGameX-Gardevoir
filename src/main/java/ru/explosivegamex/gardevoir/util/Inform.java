@@ -3,7 +3,8 @@ package ru.explosivegamex.gardevoir.util;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class Informer {
+public class Inform
+{
 
     public static void to(Player player, String text) {
         to(player, text, MessageType.INFO);

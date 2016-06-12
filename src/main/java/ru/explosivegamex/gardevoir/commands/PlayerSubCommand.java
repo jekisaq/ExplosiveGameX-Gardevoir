@@ -1,8 +1,5 @@
 package ru.explosivegamex.gardevoir.commands;
 
-import com.sk89q.worldguard.bukkit.WGBukkit;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
@@ -21,11 +18,4 @@ public abstract class PlayerSubCommand {
     }
 
     public abstract void run();
-
-    protected boolean isPlayerInsideRegion(String regionName) {
-        RegionManager manager = WGBukkit.getRegionManager(player.getWorld());
-        Set<ProtectedRegion> regionSet = manager.getApplicableRegions(player.getLocation()).getRegions();
-
-        return regionSet.stream().anyMatch(protectedRegion -> protectedRegion.getId().equals(regionName));
-    }
 }
