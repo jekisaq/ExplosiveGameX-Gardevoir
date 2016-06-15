@@ -35,6 +35,8 @@ public class GardevoirMain extends JavaPlugin
         } else {
             getLogger().severe("Command pvp aren't loaded, because PlayerUnmovedListener not detected.");
         }
+
+        getLogger().info("All commands have been loaded.");
     }
 
     private void setUpConfig() {

@@ -14,7 +14,7 @@ public class PlayerUnmovedListener implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        removeListeningPlayer(event.getPlayer());
+        cancelListening(event.getPlayer());
     }
 
     public void addListening(Player player) {
@@ -25,7 +25,7 @@ public class PlayerUnmovedListener implements Listener {
         return unmovedPlayers.contains(player);
     }
 
-    public void removeListeningPlayer(Player player) {
+    public void cancelListening(Player player) {
         unmovedPlayers.removeIf(p -> p.equals(player));
     }
 

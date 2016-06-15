@@ -43,7 +43,7 @@ public class LeaveSubCommand extends PlayerSubCommand {
                     Inform.to(player, "Вы покинули &c&lpvp&r-&6&lарену", MessageType.SUCCESS);
                 }
 
-                playerUnmovedListener.removeListeningPlayer(player);
+                playerUnmovedListener.cancelListening(player);
             } else {
                 Inform.to(player, "Запрос на телепортацию был отменен!", MessageType.ERROR);
             }

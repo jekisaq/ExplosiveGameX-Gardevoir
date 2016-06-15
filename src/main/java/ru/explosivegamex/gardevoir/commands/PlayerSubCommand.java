@@ -8,8 +8,8 @@ import java.util.Set;
 public abstract class PlayerSubCommand {
 
     protected Player player;
-    protected Command command;
-    protected String[] args;
+    private Command command;
+    private String[] args;
 
     public PlayerSubCommand(Player player, Command command, String[] args) {
         this.command = command;
