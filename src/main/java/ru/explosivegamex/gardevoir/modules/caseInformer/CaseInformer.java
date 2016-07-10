@@ -5,7 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.explosivegamex.gardevoir.modules.Module;
-import ru.explosivegamex.gardevoir.modules.caseInformer.fireworkScripts.CubeScript;
+import ru.explosivegamex.gardevoir.modules.caseInformer.fireworkScripts.SquareScript;
 import ru.explosivegamex.gardevoir.util.Inform;
 import ru.explosivegamex.gardevoir.util.MessageType;
 import ru.tehkode.permissions.PermissionUser;
@@ -36,7 +36,7 @@ public class CaseInformer extends Module implements Listener {
         Inform.to(e.getPlayer(), "Поздравляем Вас с открытием кейса. Вы можете написать команду /menu и перейти в пункт \"Донат\", после чего найти и прочитать все возможности Вашей новой привилегии. Так же не забывайте ознакомиться с правилами для донатеров, дабы избежать неприятной ситуации."
                 , MessageType.SUCCESS);
 
-        FireworksProcessor fireworks = new FireworksProcessor(new CubeScript(e.getPlayer().getLocation()));
+        FireworksProcessor fireworks = new FireworksProcessor(new SquareScript(e.getPlayer().getLocation()));
         fireworks.run();
     }
 
