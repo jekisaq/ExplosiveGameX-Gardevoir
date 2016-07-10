@@ -3,7 +3,7 @@ package ru.explosivegamex.gardevoir.commands.pvp;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
+import ru.explosivegamex.gardevoir.GardevoirMain;
 import ru.explosivegamex.gardevoir.commands.PlayerSubCommand;
 import ru.explosivegamex.gardevoir.listeners.PlayerUnmovedListener;
 import ru.explosivegamex.gardevoir.util.GardevoirPlayer;
@@ -13,15 +13,12 @@ import ru.explosivegamex.gardevoir.util.MessageType;
 public class LeaveSubCommand extends PlayerSubCommand {
 
     private String pvpRegionName;
-    private JavaPlugin plugin;
-    private PlayerUnmovedListener playerUnmovedListener;
+    private GardevoirMain plugin;
     private Location lobby;
 
-    public LeaveSubCommand(JavaPlugin plugin, PlayerUnmovedListener playerUnmovedListener, String pvpRegionName, Player player, Command command) {
+    public LeaveSubCommand(GardevoirMain plugin, String pvpRegionName, Player player, Command command) {
         super(player, command, new String[0]);
-
         this.pvpRegionName = pvpRegionName;
-        this.playerUnmovedListener = playerUnmovedListener;
         this.plugin = plugin;
     }
 
@@ -35,15 +32,15 @@ public class LeaveSubCommand extends PlayerSubCommand {
     }
 
     private void performDelayedTeleport() {
-        playerUnmovedListener.addListening(player);
+        PlayerUnmovedListener.addListening(player);
 
         plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-            if (playerUnmovedListener.hasPlayerMoved(player)) {
+            if (PlayerUnmovedListener.hasPlayerMoved(player)) {
                 if (player.teleport(getLobbyLocation())) {
                     Inform.to(player, "Вы покинули &c&lpvp&r-&6&lарену", MessageType.SUCCESS);
                 }
 
-                playerUnmovedListener.cancelListening(player);
+                PlayerUnmovedListener.cancelListening(player);
             } else {
                 Inform.to(player, "Запрос на телепортацию был отменен!", MessageType.ERROR);
             }

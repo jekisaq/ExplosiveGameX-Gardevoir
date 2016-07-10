@@ -1,8 +1,8 @@
 name: Gardevoir
-version: 0.1.7
+version: 0.2.0
 author: 'ExplosiveGameX Team'
 main: ru.explosivegamex.gardevoir.GardevoirMain
-depend: [WorldGuard, WGRegionEvents, Essentials]
+depend: [WorldGuard, WGRegionEvents, Essentials, PermissionsEx]
 commands:
    pvp:
       description: Command for a leave from pvp-arena

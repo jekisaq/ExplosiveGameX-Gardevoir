@@ -1,26 +1,23 @@
 package ru.explosivegamex.gardevoir.commands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
+import ru.explosivegamex.gardevoir.GardevoirMain;
 import ru.explosivegamex.gardevoir.commands.pvp.LeaveSubCommand;
-import ru.explosivegamex.gardevoir.listeners.PlayerUnmovedListener;
+import ru.explosivegamex.gardevoir.util.Inform;
 
 import java.util.logging.Logger;
 
 public class PvPCommand implements CommandExecutor {
 
     private Logger logger;
-    private JavaPlugin plugin;
+    private GardevoirMain plugin;
     private String pvpArenaName;
-    private PlayerUnmovedListener playerUnmovedListener;
 
-    public PvPCommand(JavaPlugin plugin, PlayerUnmovedListener playerUnmovedListener, String regionName) {
+    public PvPCommand(GardevoirMain plugin, String regionName) {
         this.plugin = plugin;
-        this.playerUnmovedListener = playerUnmovedListener;
         this.pvpArenaName = regionName;
         this.logger = plugin.getLogger();
     }
@@ -29,7 +26,7 @@ public class PvPCommand implements CommandExecutor {
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("leave")) {
                 if (sender instanceof Player) {
-                    PlayerSubCommand leaveSubCommand = new LeaveSubCommand(plugin, playerUnmovedListener, pvpArenaName, (Player) sender, command);
+                    PlayerSubCommand leaveSubCommand = new LeaveSubCommand(plugin, pvpArenaName, (Player) sender, command);
                     leaveSubCommand.run();
                 } else {
                     logger.info("This command might be call by player only!");
@@ -45,7 +42,7 @@ public class PvPCommand implements CommandExecutor {
     }
 
     private void showUsage(CommandSender sender, Command command) {
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&7&lИспользование: "));
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', command.getUsage()));
+        Inform.to(sender, "Использование: ");
+        Inform.to(sender, command.getUsage());
     }
 }

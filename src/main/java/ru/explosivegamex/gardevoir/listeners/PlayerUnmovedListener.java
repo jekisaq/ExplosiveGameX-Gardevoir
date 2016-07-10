@@ -1,32 +1,43 @@
 package ru.explosivegamex.gardevoir.listeners;
 
+import com.google.common.collect.Sets;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import java.util.HashSet;
 import java.util.Set;
 
-public class PlayerUnmovedListener implements Listener {
+public final class PlayerUnmovedListener implements Listener {
 
-    private Set<Player> unmovedPlayers = new HashSet<>();
+    private static Set<Player> unmovedPlayers = Sets.newHashSet();
+    private static final PlayerUnmovedListener INSTANCE = new PlayerUnmovedListener();
+
+    private PlayerUnmovedListener() {
+        if (INSTANCE != null) {
+            throw new IllegalStateException("PlayerUnmovedListener already instantiated");
+        }
+    }
+
+    public static PlayerUnmovedListener getInstance() {
+        return INSTANCE;
+    }
+
+    public static void addListening(Player player) {
+        unmovedPlayers.add(player);
+    }
+
+    public static boolean hasPlayerMoved(Player player) {
+        return unmovedPlayers.contains(player);
+    }
+
+    public static void cancelListening(Player player) {
+        unmovedPlayers.removeIf(p -> p.equals(player));
+    }
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         cancelListening(event.getPlayer());
-    }
-
-    public void addListening(Player player) {
-        unmovedPlayers.add(player);
-    }
-
-    public boolean hasPlayerMoved(Player player) {
-        return unmovedPlayers.contains(player);
-    }
-
-    public void cancelListening(Player player) {
-        unmovedPlayers.removeIf(p -> p.equals(player));
     }
 
 }
