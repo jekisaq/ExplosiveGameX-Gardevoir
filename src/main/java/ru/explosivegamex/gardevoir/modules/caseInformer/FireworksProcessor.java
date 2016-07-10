@@ -50,8 +50,6 @@ public class FireworksProcessor implements Runnable {
      * @param loc place at the fireworks should spawn
      */
     private void shootFirework(Location loc) {
-
-
         Firework firework = (Firework) loc.getWorld()
                 .spawnEntity(loc, EntityType.FIREWORK);
         FireworkMeta fireworkMeta = firework.getFireworkMeta();
