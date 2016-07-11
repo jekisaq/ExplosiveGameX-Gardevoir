@@ -1,32 +1,20 @@
 package ru.explosivegamex.gardevoir;
 
-import com.google.common.collect.Maps;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import ru.explosivegamex.gardevoir.commands.PvPCommand;
-import ru.explosivegamex.gardevoir.listeners.PlayerQuitListener;
-import ru.explosivegamex.gardevoir.listeners.PlayerUnmovedListener;
-import ru.explosivegamex.gardevoir.listeners.PvPArenaEnterListener;
 import ru.explosivegamex.gardevoir.modules.Module;
 import ru.explosivegamex.gardevoir.modules.caseInformer.CaseInformer;
-
-import java.util.Map;
+import ru.explosivegamex.gardevoir.modules.pvpArena.PvPArena;
 
 public final class GardevoirMain extends JavaPlugin
 {
     private FileConfiguration config = getConfig();
-    private Map<String, Listener> listenerMap = Maps.newHashMap();
 
     @Override
     public void onEnable() {
         setUpConfig();
-        registerEventListeners();
-        registerCommandExecutors();
-
-        register(CaseInformer.class);
-
+        register(CaseInformer.class, PvPArena.class);
         getLogger().info("GardevoirMain has been enabled.");
     }
 
@@ -34,24 +22,13 @@ public final class GardevoirMain extends JavaPlugin
     private final void register(Class<? extends Module>... modules) {
         for (Class<? extends Module> moduleClass : modules) {
             try {
-                Module module = moduleClass.getConstructor(JavaPlugin.class).newInstance(this);
+                Module module = moduleClass.getConstructor(GardevoirMain.class).newInstance(this);
                 module.enable();
             } catch (ReflectiveOperationException ex) {
-                getLogger().warning("Error occurred on registering " + moduleClass.getName() + " module");
+                getLogger().warning("Error occurred on registering the " + moduleClass.getName() + " module");
                 ex.printStackTrace();
             }
         }
-    }
-
-    private void registerCommandExecutors() {
-        Listener playerUnmovedListener = listenerMap.get("playerUnmoved");
-        if (playerUnmovedListener instanceof PlayerUnmovedListener) {
-            getCommand("pvp").setExecutor(new PvPCommand(this, config.getString("PvPLobbyRegion.name")));
-        } else {
-            getLogger().severe("Command pvp aren't loaded, because PlayerUnmovedListener not detected.");
-        }
-
-        getLogger().info("All commands have been loaded.");
     }
 
     private void setUpConfig() {
@@ -68,16 +45,6 @@ public final class GardevoirMain extends JavaPlugin
         config.options().copyDefaults(true);
 
         saveConfig();
-    }
-
-    private void registerEventListeners() {
-        listenerMap.put("playerUnmoved", PlayerUnmovedListener.getInstance());
-        listenerMap.put("playerQuit", new PlayerQuitListener(config.getString("PvPLobbyRegion.name")));
-        listenerMap.put("pvpArenaEnter", new PvPArenaEnterListener(config.getString("PvPLobbyRegion.name")));
-
-        listenerMap.forEach((key, listener) -> getServer().getPluginManager().registerEvents(listener, this));
-
-        getLogger().info("All event listeners have been loaded.");
     }
 
 }

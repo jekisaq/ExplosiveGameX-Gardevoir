@@ -1,11 +1,11 @@
-package ru.explosivegamex.gardevoir.commands.pvp;
+package ru.explosivegamex.gardevoir.modules.pvpArena.commands.pvp;
 
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import ru.explosivegamex.gardevoir.GardevoirMain;
 import ru.explosivegamex.gardevoir.commands.PlayerSubCommand;
-import ru.explosivegamex.gardevoir.listeners.PlayerUnmovedListener;
+import ru.explosivegamex.gardevoir.modules.pvpArena.listeners.PlayerUnmovedListener;
 import ru.explosivegamex.gardevoir.util.GardevoirPlayer;
 import ru.explosivegamex.gardevoir.util.Inform;
 import ru.explosivegamex.gardevoir.util.MessageType;

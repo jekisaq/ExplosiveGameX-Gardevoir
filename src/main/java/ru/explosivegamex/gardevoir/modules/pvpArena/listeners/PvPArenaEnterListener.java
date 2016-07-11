@@ -1,4 +1,4 @@
-package ru.explosivegamex.gardevoir.listeners;
+package ru.explosivegamex.gardevoir.modules.pvpArena.listeners;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;

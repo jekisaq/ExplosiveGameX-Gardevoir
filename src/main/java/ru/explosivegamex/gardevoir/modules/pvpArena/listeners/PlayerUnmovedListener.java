@@ -1,4 +1,4 @@
-package ru.explosivegamex.gardevoir.listeners;
+package ru.explosivegamex.gardevoir.modules.pvpArena.listeners;
 
 import com.google.common.collect.Sets;
 import org.bukkit.entity.Player;

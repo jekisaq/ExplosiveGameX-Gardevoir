@@ -1,11 +1,12 @@
-package ru.explosivegamex.gardevoir.commands;
+package ru.explosivegamex.gardevoir.modules.pvpArena.commands;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import ru.explosivegamex.gardevoir.GardevoirMain;
-import ru.explosivegamex.gardevoir.commands.pvp.LeaveSubCommand;
+import ru.explosivegamex.gardevoir.commands.PlayerSubCommand;
+import ru.explosivegamex.gardevoir.modules.pvpArena.commands.pvp.LeaveSubCommand;
 import ru.explosivegamex.gardevoir.util.Inform;
 
 import java.util.logging.Logger;

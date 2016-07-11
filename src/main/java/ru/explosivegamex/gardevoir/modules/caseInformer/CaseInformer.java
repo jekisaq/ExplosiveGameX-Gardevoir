@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import ru.explosivegamex.gardevoir.GardevoirMain;
 import ru.explosivegamex.gardevoir.modules.Module;
 import ru.explosivegamex.gardevoir.modules.caseInformer.fireworkScripts.SquareScript;
 import ru.explosivegamex.gardevoir.util.GardevoirPlayer;
@@ -14,9 +15,9 @@ import ru.explosivegamex.gardevoir.util.MessageType;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CaseInformer extends Module implements Listener {
+public class CaseInformer extends Module<GardevoirMain> implements Listener {
 
-    public CaseInformer(JavaPlugin plugin) {
+    public CaseInformer(GardevoirMain plugin) {
         super(plugin);
     }
 
