@@ -1,5 +1,5 @@
 name: Gardevoir
-version: 0.3.0
+version: 0.3.1
 author: 'ExplosiveGameX Team'
 main: ru.explosivegamex.gardevoir.GardevoirMain
 depend: [WorldGuard, WGRegionEvents, Essentials, PermissionsEx]

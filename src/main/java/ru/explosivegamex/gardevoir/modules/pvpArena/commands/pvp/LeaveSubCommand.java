@@ -1,25 +1,31 @@
 package ru.explosivegamex.gardevoir.modules.pvpArena.commands.pvp;
 
 import org.bukkit.Location;
-import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import ru.explosivegamex.gardevoir.GardevoirMain;
-import ru.explosivegamex.gardevoir.commands.PlayerSubCommand;
 import ru.explosivegamex.gardevoir.modules.pvpArena.listeners.PlayerUnmovedListener;
 import ru.explosivegamex.gardevoir.util.GardevoirPlayer;
 import ru.explosivegamex.gardevoir.util.Inform;
 import ru.explosivegamex.gardevoir.util.MessageType;
 
-public class LeaveSubCommand extends PlayerSubCommand {
+public class LeaveSubCommand {
 
     private String pvpRegionName;
     private GardevoirMain plugin;
+    private Player player;
     private Location lobby;
 
-    public LeaveSubCommand(GardevoirMain plugin, String pvpRegionName, Player player, Command command) {
-        super(player, command, new String[0]);
-        this.pvpRegionName = pvpRegionName;
+    public LeaveSubCommand(GardevoirMain plugin, Player player) {
         this.plugin = plugin;
+        this.player = player;
+        this.pvpRegionName = plugin.getConfig().getString("PvPLobbyRegion.name");
+
+        lobby = new Location(
+                plugin.getServer().getWorld("world"),
+                plugin.getConfig().getDouble("PvPLobbyRegion.x"),
+                plugin.getConfig().getDouble("PvPLobbyRegion.y"),
+                plugin.getConfig().getDouble("PvPLobbyRegion.z")
+        );
     }
 
     public void run() {
@@ -36,7 +42,7 @@ public class LeaveSubCommand extends PlayerSubCommand {
 
         plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             if (PlayerUnmovedListener.hasPlayerMoved(player)) {
-                if (player.teleport(getLobbyLocation())) {
+                if (player.teleport(lobby)) {
                     Inform.to(player, "Вы покинули &c&lpvp&r-&6&lарену", MessageType.SUCCESS);
                 }
 
@@ -45,18 +51,5 @@ public class LeaveSubCommand extends PlayerSubCommand {
                 Inform.to(player, "Запрос на телепортацию был отменен!", MessageType.ERROR);
             }
         }, plugin.getConfig().getLong("leave.delay") * 20);
-    }
-
-    private Location getLobbyLocation() {
-        if (lobby == null) {
-            lobby = new Location(
-                    plugin.getServer().getWorld("world"),
-                    plugin.getConfig().getDouble("PvPLobbyRegion.x"),
-                    plugin.getConfig().getDouble("PvPLobbyRegion.y"),
-                    plugin.getConfig().getDouble("PvPLobbyRegion.z")
-            );
-        }
-
-        return lobby;
     }
 }

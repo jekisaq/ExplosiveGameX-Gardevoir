@@ -4,7 +4,6 @@ import net.lightshard.itemcases.event.RewardReceivedEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.java.JavaPlugin;
 import ru.explosivegamex.gardevoir.GardevoirMain;
 import ru.explosivegamex.gardevoir.modules.Module;
 import ru.explosivegamex.gardevoir.modules.caseInformer.fireworkScripts.SquareScript;

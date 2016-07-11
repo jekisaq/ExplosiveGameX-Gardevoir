@@ -36,12 +36,7 @@ public class PvPArena extends Module<GardevoirMain> {
     }
 
     private void registerCommandExecutors() {
-        Listener playerUnmovedListener = listenerMap.get("playerUnmoved");
-        if (playerUnmovedListener instanceof PlayerUnmovedListener) {
-            plugin.getCommand("pvp").setExecutor(new PvPCommand(plugin, plugin.getConfig().getString("PvPLobbyRegion.name")));
-        } else {
-            plugin.getLogger().severe("Command pvp aren't loaded, because PlayerUnmovedListener not detected.");
-        }
+        register(new PvPCommand(plugin), "pvp");
     }
 
     @Override

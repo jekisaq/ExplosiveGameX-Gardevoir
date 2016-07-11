@@ -1,49 +1,70 @@
 package ru.explosivegamex.gardevoir.modules.pvpArena.commands;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import com.google.common.collect.Maps;
 import ru.explosivegamex.gardevoir.GardevoirMain;
-import ru.explosivegamex.gardevoir.commands.PlayerSubCommand;
+import ru.explosivegamex.gardevoir.commands.Command;
+import ru.explosivegamex.gardevoir.commands.SubCommand;
 import ru.explosivegamex.gardevoir.modules.pvpArena.commands.pvp.LeaveSubCommand;
-import ru.explosivegamex.gardevoir.util.Inform;
 
-import java.util.logging.Logger;
+import java.lang.reflect.Method;
+import java.util.Map;
 
-public class PvPCommand implements CommandExecutor {
+public class PvPCommand extends Command {
 
-    private Logger logger;
+    private final Map<String, Method> methods = Maps.newLinkedHashMap();
+
     private GardevoirMain plugin;
-    private String pvpArenaName;
 
-    public PvPCommand(GardevoirMain plugin, String regionName) {
+    public PvPCommand(GardevoirMain plugin) {
         this.plugin = plugin;
-        this.pvpArenaName = regionName;
-        this.logger = plugin.getLogger();
+        setAllowConsole(false);
+
+        registerSubCommands();
     }
 
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length > 0) {
-            if (args[0].equalsIgnoreCase("leave")) {
-                if (sender instanceof Player) {
-                    PlayerSubCommand leaveSubCommand = new LeaveSubCommand(plugin, pvpArenaName, (Player) sender, command);
-                    leaveSubCommand.run();
-                } else {
-                    logger.info("This command might be call by player only!");
-                }
-            } else {
-                showUsage(sender, command);
+    private void registerSubCommands() {
+        for(Method method : getClass().getDeclaredMethods()) {
+            if(!method.isAnnotationPresent(SubCommand.class)) {
+                continue;
             }
-        } else {
-            showUsage(sender, command);
+
+            methods.put(method.getName(), method);
+        }
+    }
+
+    @Override
+    public void execute() throws ReflectiveOperationException {
+        String subCommand = getArgLength() > 0 ? getArg(0) : "help";
+        Method method = methods.get(subCommand.toLowerCase());
+        if(method == null) {
+            reply(false, "Неизвестная команда");
+            return;
         }
 
-        return true;
+        SubCommand info = method.getAnnotation(SubCommand.class);
+        if(getArgLength() < info.minArgs() + 1) {
+            reply(false, "Эта команда требует другое кол-во аргументов");
+            return;
+        }
+
+        method.invoke(this);
     }
 
-    private void showUsage(CommandSender sender, Command command) {
-        Inform.to(sender, "Использование: ");
-        Inform.to(sender, command.getUsage());
+    @SubCommand(description = "Вывести справку команды", minArgs = -1)
+    private void help() {
+        reply("Использование: ");
+
+        for(Map.Entry<String, Method> entry : methods.entrySet()) {
+            String subCommandName = entry.getKey();
+            SubCommand info = entry.getValue().getAnnotation(SubCommand.class);
+
+            reply("&6&l/pvp " + subCommandName + " &7- " + info.description());
+        }
+    }
+
+    @SubCommand(description = "Покинуть pvp-арену")
+    private void leave() {
+        LeaveSubCommand leaveSubCommand = new LeaveSubCommand(plugin, player);
+        leaveSubCommand.run();
     }
 }
